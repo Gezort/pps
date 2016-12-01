@@ -1,0 +1,4 @@
+id,type,max_weight,time,cost,from_id,to_id
+0,sea,10,5,10,0,1
+1,sea,11,5,10,1,2
+2,road,12,20,5,0,2

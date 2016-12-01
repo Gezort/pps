@@ -1,11 +1,17 @@
 from datetime import datetime
+from enum import Enum
+
+class OrderStatus(Enum):
+    launched = 'launched'
+    delivered = 'delivered'
+
+class Criteria(Enum):
+    time = 'time'
+    cost = 'cost'
 
 class Order():
 
-    STATUS = {0 : 'launched', 1 : 'delivered'}
-    CRITERIA = {0 : 'time', 1 : 'cost'}
-
-    def __init__(self, id, time, items, route, start, end, criteria=0):
+    def __init__(self, id, time, items, route, start, end, criteria=Criteria('time')):
         self.id = id
         self.creationTime = time
         self.itemList = items
@@ -40,3 +46,21 @@ class Order():
 
     def move(self):
         self.route.move()
+
+    def getWeight(self):
+        return sum([item.getWeight() for item in self.itemList])
+
+    def getCriteria(self):
+        return self.criteria
+
+    def getStartLocation(self):
+        return self.startLocation
+
+    def getFinishLocation(self):
+        return self.finishLocation
+
+    def __repr__(self):
+        return "Order id = {} creationTime = {} \n route = {} startLocation = {}\
+                finishLocation = {} criteria = {}".format(self.id, self.creationTime,
+                    self.route, self.startLocation,
+                    self.finishLocation, self.criteria)

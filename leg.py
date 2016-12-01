@@ -5,14 +5,19 @@ class LegType(Enum):
     Road = 'road'
 
 class Leg:
-    def Leg(self, id, type, max_weight, time, cost, from_id, to_id):
+    def __init__(self, id, type, max_weight, time, cost, from_id, to_id):
         self.id = id
         self.type = type
-        self.max_weight = max_weight
+        self.maxWeight = max_weight
         self.time = time
         self.cost = cost
-        self.from_id = from_id
-        self.to_id = to_id
+        self.fromId = from_id
+        self.toId = to_id
+    def __repr__(self):
+        return "Leg id = {} type = {} max_weight = {} time = {} cost = {} from_id = {} to_id = {}".format(self.id, self.type, self.maxWeight,
+                self.time, self.cost,
+                self.fromId, self.toId)
+
     def getType(self):
         return self.type
     def getTime(self):

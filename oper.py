@@ -1,7 +1,9 @@
 from order import Criteria
+from route import Route
 
 class Operator:
     def makeRoute(self, order, graph):
+        print("\nmakeRoute\n")
         dist = {}
         marked = {}
         for edge in graph.getLegs():
@@ -29,17 +31,17 @@ class Operator:
                 if dist[u] is None or dist[u] > new_dist:
                     dist[u] = new_dist
                     fr[u] = edge
-        print(fr)
         cur = order.getFinishLocation()
         if dist[cur] is None:
             return None
+        print("dist {}".format(dist[cur]))
         result = []
         while True:
-            result.append(fr[cur])
             if cur == start:
                 break
+            result.append(fr[cur])
             cur = fr[cur].getFromId()
-        return Route(reversed(result))
+        return Route(result[::-1])
 
     def makeTimeOptimalRoute(self, order, graph):
         makeRoute(order, graph, "time") 

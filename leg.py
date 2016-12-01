@@ -20,15 +20,21 @@ class Leg:
 
     def getType(self):
         return self.type
+
     def getTime(self):
         return self.time
+
     def getCost(self):
         return self.cost
+
     def getMaxWeight(self):
         return self.maxWeight
+
     def getFromId(self):
         return self.fromId
+
     def getToId(self):
         return self.toId
+
     def getId(self):
         return self.id

@@ -11,7 +11,7 @@ class Item():
     def getWeight(self):
         return self.weight
 
-    def getCost():
+    def getCost(self):
         return self.cost
 
     def __str__(self):

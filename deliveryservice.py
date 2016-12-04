@@ -1,37 +1,42 @@
 class DeliveryService():
 
     def __init__(self, graph, history, orders, launchQueue, currentOrders, operator):
-        pass
+        self.graph = graph
+        self.history = history
+        self.orders = orders
+        self.launchQueue = launchQueue
+        self.currentOrders = currentOrders
+        self.operator = operator
 
-    def launchOrder(self, id):
+    def launchOrder(self, orderId):
         pass
 
     def addOrder(self):
         pass
 
-    def deleteOrder(self, id):
+    def deleteOrder(self, orderId):
         pass
 
-    def getOrderInfo(self):
+    def getOrderInfo(self, orderId):
         pass
 
-    def addItemToOrder(self):
+    def addItemToOrder(self, orderId, itemId):
         pass
 
-    def deleteItemFromOrder(self):
+    def deleteItemFromOrder(self, oderId, itemId):
         pass
 
-    def buildRouteForOrder(self):
+    def buildRouteForOrder(self, orderId):
         pass
 
-    def getLocation(self):
+    def getLocation(self, orderId):
         pass
 
-    def moveOrder(self):
+    def moveOrder(self, orderId):
         pass
 
-    def confirmOrderTransition(self):
+    def confirmOrderTransition(self, orderId):
         pass
 
-    def lookupHistory(self):
+    def lookupHistory(self, orderId):
         pass

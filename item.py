@@ -11,8 +11,8 @@ class Item():
     def getWeight(self):
         return self.weight
 
-    def getCost():
+    def getCost(self):
         return self.cost
 
-    def __str__(self):
+    def __repr__(self):
         return 'Item. name: %s, weight: %.3f, cost: %.3f' % (self.name, self.weight, self.cost)

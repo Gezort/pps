@@ -1,5 +1,3 @@
-from leg import Leg
-
 class Route():
 
     def __init__(self, legs, location=0):

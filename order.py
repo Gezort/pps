@@ -22,10 +22,13 @@ class Order():
         self.finishLocation = end
 
     def getLocation(self):
-        return self.route.getCurrentLocation()
+        return None if self.route is None else self.route.getCurrentLocation()
 
     def addItem(self, item):
         self.itemList.append(item)
+    
+    def atEnd(self):
+        return self.getLocation() is None
 
     def deleteItem(self, item):
         item_pos = 0
@@ -53,11 +56,20 @@ class Order():
     def getCriteria(self):
         return self.criteria
 
+    def setCriteria(self, criteria):
+        self.criteria = criteria
+
     def getStartLocation(self):
         return self.startLocation
 
+    def setStartLocation(self, start_location):
+        self.startLocation = start_location
+
     def getFinishLocation(self):
         return self.finishLocation
+
+    def setFinishLocation(self, value):
+        self.finishLocation = value
 
     def __repr__(self):
         return "Order id = {} creationTime = {} \n route = {} startLocation = {}\

@@ -3,7 +3,6 @@ from route import Route
 
 class Operator:
     def makeRoute(self, order, graph):
-        print("\nmakeRoute\n")
         dist = {}
         marked = {}
         for edge in graph.getLegs():
@@ -12,6 +11,7 @@ class Operator:
             marked[edge.getFromId()] = False
             marked[edge.getToId()] = False
         start = order.getStartLocation()
+        print("makeRoute start = {}".format(start))
         dist[start] = 0
         fr = {}
         while True:

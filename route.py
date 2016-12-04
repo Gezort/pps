@@ -6,10 +6,10 @@ class Route():
         self.listLegs = legs
         self.currentLocation = location
 
-    def getCurrentLocation():
-        return self.listLegs[self.currentLocation]
+    def getCurrentLocation(self):
+        return None if self.currentLocation == len(self.listLegs) else self.listLegs[self.currentLocation]
 
-    def move():
+    def move(self):
         self.currentLocation += 1
 
     def __repr__(self):

@@ -1,7 +1,7 @@
-from graph import Graph
-from item import Item
-from order import Order, Criteria
-from oper import Operator
+from .graph import Graph
+from .item import Item
+from .order import Order, Criteria
+from .oper import Operator
 #from leg import Leg
 
 g = Graph()

@@ -1,7 +1,7 @@
-from delivery_service import DeliveryService
-from graph import Graph
-from item import Item
-from order import Criteria
+from .delivery_service import DeliveryService
+from .graph import Graph
+from .item import Item
+from .order import Criteria
 
 graph = Graph()
 ds = DeliveryService(graph)

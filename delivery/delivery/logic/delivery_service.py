@@ -1,7 +1,7 @@
-from oper import Operator
-from order import Order
-from warehouse import Warehouse
-from orders_queue import OrdersQueue
+from .oper import Operator
+from .order import Order
+from .warehouse import Warehouse
+from .orders_queue import OrdersQueue
 
 class DeliveryService:
     def __init__(self, graph):

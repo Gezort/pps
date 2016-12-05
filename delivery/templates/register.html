@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+
+        {% if registered %}
+        <a href="/textform">Return to the homepage.</a><br/>
+        {% else %}
+
+            {% if user_form.non_field_errors %}
+              <div class="alert alert-danger">{{ user_form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="col-md-6 col-sm-offset-3 container">
+              <form class="form-signin" action="{% url 'login:register' redirect_to %}" method="post" >
+                <h2 class="form-signin-heading">Please register</h2>
+                {% csrf_token %}
+                {{ user_form.username|add_class:"form-control"|append_attr:"placeholder:Username" }}
+                {% if user_form.username.errors %}
+                  <div class="alert alert-danger">{{ user_form.username.errors }}</div>
+                {% endif %}
+
+                {{ user_form.password|add_class:"form-control"|append_attr:"placeholder:Password" }}
+                {% if user_form.password.errors %}
+                    <div class="alert alert-danger">{{ user_form.password.errors }}</div>
+                {% endif %}
+
+                {{ group_form.group|add_class:"form-control" }}
+                {% if group_form.group.errors %}
+                    <div class="alert alert-danger">{{ group_form.group.errors }}</div>
+                {% endif %}
+                
+                <button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Register</button>
+                {% if next == "" %}
+                  <input type="hidden" name="next" value="/" />
+                {% else %}
+                  <input type="hidden" name="next" value="{{ next }}" />
+                {% endif %}
+              </form>
+            </div>
+    {% endif %}
+{% endblock %}

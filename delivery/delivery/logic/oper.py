@@ -1,5 +1,5 @@
-from order import Criteria
-from route import Route
+from .order import Criteria
+from .route import Route
 
 class Operator:
     def makeRoute(self, order, graph):

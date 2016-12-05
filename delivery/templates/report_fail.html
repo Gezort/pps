@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+<a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
+<a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
+<p> Reported. </p>
+
+{% endblock %}

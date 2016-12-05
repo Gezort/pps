@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block body %}
+
+    {% if user_form.non_field_errors  %}
+      <div class="alert alert-danger">Username or password are not valid</div>
+    {% endif %}
+
+    {% if login_error %}
+      <div class="alert alert-danger">Your username and/or password are incorrect. Please try again.</div>
+    {% endif %}
+
+    <div class="col-md-6 col-sm-offset-3 container">
+      <form class="form-signin" action="{% url 'login:login' redirect_to|urlencode %}" method="post" >
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {% csrf_token %}
+        {{ user_form.username | add_class:"form-control"|append_attr:"placeholder:Username" }}
+        {{ user_form.password | add_class:"form-control"|append_attr:"placeholder:Password" }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="login">Login</button>
+
+        {% if next == "" %}
+          <input type="hidden" name="next" value="/" />
+        {% else %}
+          <input type="hidden" name="next" value="{{ next }}" />
+        {% endif %}
+      </form>
+    </div>
+
+{% endblock %}
+

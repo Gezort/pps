@@ -1,13 +1,15 @@
 import pandas
-from leg import Leg, LegType
+from .leg import Leg, LegType
 
 class Graph:
+    
     def getNeighbours(self, vertex, max_weight):
         result = [edge for edge in self.legs if edge.getFromId() == vertex and
                 edge.getMaxWeight() >= max_weight]
         return result
+
     def __init__(self):
-        df = pandas.read_csv('graph.csv')
+        df = pandas.read_csv('./delivery/logic/graph.csv')
         self.legs = []
         for j in range(len(df)):
             self.legs.append(

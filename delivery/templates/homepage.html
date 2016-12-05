@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+
+{% if request.user.is_authenticated  %}
+    {% if is_courier %}
+        <a href="{% url 'fail' %}" class="btn btn-primary">Report fail</a>
+
+        <a href="{% url 'move' %}" class="btn btn-primary">Move order</a>
+    {% else %}
+        <a href="{% url 'create' %}" class="btn btn-primary">Create order</a>
+
+        <a href="{% url 'delete' %}" class="btn btn-primary">Delete order</a>
+
+        <a href="{% url 'configure' %}" class="btn btn-primary">Configure order</a>
+
+        <a href="{% url 'launch' %}" class="btn btn-primary">Launch order</a>
+        
+        <a href="{% url 'track' %}" class="btn btn-primary">Track order</a>
+
+        <a href="{% url 'lookup' %}" class="btn btn-primary">Lookup history</a>
+    {% endif %}
+
+    <a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
+{% endif %}
+
+{% endblock %}

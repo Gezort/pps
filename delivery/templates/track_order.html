@@ -7,7 +7,7 @@
 <a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
 <a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
 <p>
-    Current location is: ???  
+    Current location is: {{ location }}
 </p>
 
 {% endblock %}

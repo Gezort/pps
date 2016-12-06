@@ -81,6 +81,8 @@ def track(request):
             try:
                 global DELIVERY_SERVICE
                 location = DELIVERY_SERVICE.getLocation(id)
+                if location is None:
+                    raise
                 return render(request, 'track_order.html', {'location' : location})
             except:
                 raise Http404("Order ID not found")    

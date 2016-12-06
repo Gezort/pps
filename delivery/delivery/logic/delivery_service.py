@@ -57,6 +57,7 @@ class DeliveryService:
         # self.current_history.delete(order_id)
 
     def launchOrder(self, order_id):
+        print (self.orders_dict)
         if not self.warehouse.checkItems(
                 self.orders_dict[order_id].getItemsList()):
             return False

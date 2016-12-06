@@ -7,10 +7,79 @@
 <a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
 <a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
 
-<!-- <form method="post">
+<form action="{% url 'set_start' %}" method="post">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Configure" />
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="number" step="1" name="location">
+        <input type="submit" value="Set start location">
+    </p>
 </form>
- -->
+
+<form action="{% url 'set_finish' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="number" step="1" name="location">
+        <input type="submit" value="Set finish location">
+    </p>
+</form>
+
+<form action="{% url 'set_criteria' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="radio" name="criteria" value="0"> time
+        <input type="radio" name="criteria" value="1"> cost
+        <input type="submit" value="Set criteria">
+    </p>
+</form>
+
+<form action="{% url 'add_item' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="number" step="1" name="item_id">
+        <input type="submit" value="Add item">
+    </p>
+</form>
+
+<form action="{% url 'delete_item' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="number" step="1" name="item_id">
+        <input type="submit" value="Delete item">
+    </p>
+</form>
+
+<form action="{% url 'build_route' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value={{ order_id }}>
+    <p>
+        <input type="submit" value="Build route">
+    </p>
+</form>
+
+<p>
+    Current items : {{ items }}
+</p>
+<p>
+    Current start : {{ start }}
+</p>
+<p>
+    Current finish : {{ finish }}
+</p>
+<p>
+    Current route : {{ route }}
+</p>
+<p>
+    Current criteria : {{ criteria }}
+</p>
+
+<p>
+    Items pool : {{ pool }}
+</p>
+
+
 {% endblock %}

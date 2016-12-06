@@ -27,6 +27,8 @@ class Order():
         return self.getLocation() is None
 
     def deleteItem(self, item_id):
+        if not item_id in self.itemList:
+            return
         item_pos = 0
         for i in range(len(self.itemList)):
             if self.itemList[i] == item_id:

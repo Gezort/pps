@@ -6,7 +6,9 @@ from .forms import OrderIdForm, ConfigureOrderForm
 from .logic.delivery_service import DeliveryService
 from .logic.graph import Graph
 from .logic.item import Item
- 
+from .logic.order import Criteria
+from .logic.list_items import ITEMS 
+
 DELIVERY_SERVICE = DeliveryService(Graph())
 
 
@@ -97,9 +99,6 @@ def configure(request):
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = form.cleaned_data['id']
-            global DELIVERY_SERVICE
-            if id not in DELIVERY_SERVICE.orders_dict:
-                raise Http404("Order ID not found")
             return redirect(reverse(configure_order, kwargs={'id' : id}))
     else:
         form = OrderIdForm()
@@ -108,24 +107,80 @@ def configure(request):
 
 def configure_order(request, id):
     check_user(request, 'users')
-    return render(request, 'configure.html')
+    global DELIVERY_SERVICE
+    global ITEMS
+    if int(id) not in DELIVERY_SERVICE.orders_dict:
+        raise Http404("Order ID not found")
 
+    order = DELIVERY_SERVICE.orders_dict[int(id)]
+    items = order.itemList
+    route = order.route
+    criteria = 'time' if order.criteria == Criteria.time else 'cost'
+    start = order.startLocation
+    finish = order.finishLocation
+    
+    start = '-' if start is None else str(start)
+    finish = '-' if finish is None else str(finish)
+    route = '-' if route is None else str(route)
+    items = '-' if items is None else str(items)
+    context = {'order_id' : id, 'items' : items, 'start' : start, 
+                        'finish' : finish, 'route' : route, 'criteria' : criteria,
+                        'pool' : str(ITEMS)}
+    return render(request, 'configure.html', context)
 
+@require_POST
 def add_item(request):
-    order_id = request.POST['order_id']
-    item_id = request.POST['item_id']
+    order_id = int(request.POST['order_id'])
+    item_id = int(request.POST['item_id'])
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.addItemToOrder(order_id, item_id)
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
+@require_POST
+def del_item(request):
+    order_id = int(request.POST['order_id'])
+    item_id = int(request.POST['item_id'])
     global DELIVERY_SERVICE
     DELIVERY_SERVICE.deleteItemFromOrder(order_id, item_id)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
-
-def del_item(request):
-    order_id = request.POST['order_id']
-    item_id = request.POST['item_id']
+@require_POST
+def set_start_location(request):
+    order_id = int(request.POST['order_id'])
+    location = int(request.POST['location'])
     global DELIVERY_SERVICE
-    DELIVERY_SERVICE.addItemFromOrder(order_id, item_id)
+    DELIVERY_SERVICE.setStartLocation(order_id, location)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@require_POST
+def set_finish_location(request):
+    order_id = int(request.POST['order_id'])
+    location = int(request.POST['location'])
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.setFinishLocation(order_id, location)
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
+@require_POST
+def set_criteria(request):
+    order_id = int(request.POST['order_id'])
+    criteria = int(request.POST['criteria'])
+    if criteria == 0:
+        criteria = Criteria.time
+    else:
+        criteria = Criteria.cost
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.setCriteria(order_id, criteria)
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
+@require_POST
+def build_route(request):
+    order_id = int(request.POST['order_id'])
+    global DELIVERY_SERVICE
+    try:
+        DELIVERY_SERVICE.buildRouteForOrder(order_id)
+    except:
+        Http404('Cant build route')
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
 def lookup(request):
     check_user(request, 'users')

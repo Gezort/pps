@@ -45,7 +45,7 @@ def delete(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.deleteOrder(id)    
@@ -62,7 +62,7 @@ def launch(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
                 launched = DELIVERY_SERVICE.launchOrder(id)
@@ -79,7 +79,7 @@ def track(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
                 location = DELIVERY_SERVICE.getLocation(id)
@@ -98,7 +98,7 @@ def configure(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             return redirect(reverse(configure_order, kwargs={'id' : id}))
     else:
         form = OrderIdForm()
@@ -192,12 +192,15 @@ def move(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
-                DELIVERY_SERVICE.move(id)
+                print ('MOVE')
+                print (DELIVERY_SERVICE.orders_dict)
+                DELIVERY_SERVICE.moveOrder(id)
                 return render(request, 'move.html', {'id' : id})
-            except:
+            except Exception as e:
+                print (e)
                 raise Http404("Order ID not found")    
     else:
         form = OrderIdForm()
@@ -209,7 +212,7 @@ def fail(request):
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
-            id = form.cleaned_data['id']
+            id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.reportFail(id)

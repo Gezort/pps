@@ -71,6 +71,6 @@ class Order():
 
     def __repr__(self):
         return "Order id = {} creationTime = {} \n route = {} startLocation = {}\
-                finishLocation = {} criteria = {}".format(self.id, self.creationTime,
-                    self.route, self.startLocation,
-                    self.finishLocation, self.criteria)
+finishLocation = {} criteria = {}".format(self.id, self.creationTime,
+                                                        self.route, self.startLocation,
+                                                        self.finishLocation, self.criteria)

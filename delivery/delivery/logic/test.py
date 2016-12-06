@@ -5,7 +5,7 @@ from .oper import Operator
 #from leg import Leg
 
 g = Graph()
-items = [Item(4, "chma", 15), Item(5, "chma2", 10)]
+items = [Item(1, 4, "chma", 15), Item(2, 5, "chma2", 10)]
 for item in items:
     print(item)
 order = Order(0, 0, items, None, 0, 2)

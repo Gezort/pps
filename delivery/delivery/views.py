@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_GET, require_POST
 from django.http import Http404, HttpResponseRedirect
-from .forms import OrderIdForm
+from .forms import OrderIdForm, ConfigureOrderForm
 from .logic.delivery_service import DeliveryService
 from .logic.graph import Graph
+from .logic.item import Item
  
 DELIVERY_SERVICE = DeliveryService(Graph())
 
@@ -48,8 +50,6 @@ def delete(request):
                 return render(request, 'delete_order.html', {'id' : id})
             except:
                 raise Http404("Order ID not found")    
-        else:
-            raise Http404("Order ID not found")
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
@@ -67,8 +67,6 @@ def launch(request):
                 return render(request, 'launch_order.html', {'launched' : launched})
             except:
                 raise Http404("Order does not exist or not configured") 
-        else:
-            raise Http404("Order ID not found")
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
@@ -81,14 +79,11 @@ def track(request):
         if form.is_valid():
             id = form.cleaned_data['id']
             try:
-                # global DELIVERY_SERVICE
-                # DELIVERY_SERVICE.deleteOrder(id)
-                # ?????????????    
-                return render(request, 'track_order.html', {'id' : id})
+                global DELIVERY_SERVICE
+                location = DELIVERY_SERVICE.getLocation(id)
+                return render(request, 'track_order.html', {'location' : location})
             except:
                 raise Http404("Order ID not found")    
-        else:
-            raise Http404("Order ID not found")
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
@@ -100,18 +95,34 @@ def configure(request):
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = form.cleaned_data['id']
-            try:
-                # global DELIVERY_SERVICE
-                # DELIVERY_SERVICE.deleteOrder(id)
-                # ?????????????    
-                return render(request, 'configure_order.html', {'id' : id})
-            except:
-                raise Http404("Order ID not found")    
-        else:
-            raise Http404("Order ID not found")
+            global DELIVERY_SERVICE
+            if id not in DELIVERY_SERVICE.orders_dict:
+                raise Http404("Order ID not found")
+            return redirect(reverse(configure_order, kwargs={'id' : id}))
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
+
+
+def configure_order(request, id):
+    check_user(request, 'users')
+    return render(request, 'configure.html')
+
+
+def add_item(request):
+    order_id = request.POST['order_id']
+    item_id = request.POST['item_id']
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.deleteItemFromOrder(order_id, item_id)
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
+
+def del_item(request):
+    order_id = request.POST['order_id']
+    item_id = request.POST['item_id']
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.addItemFromOrder(order_id, item_id)
+    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
 
 def lookup(request):
@@ -126,14 +137,11 @@ def move(request):
         if form.is_valid():
             id = form.cleaned_data['id']
             try:
-                # global DELIVERY_SERVICE
-                # DELIVERY_SERVICE.deleteOrder(id)
-                # ?????????????    
+                global DELIVERY_SERVICE
+                DELIVERY_SERVICE.move(id)
                 return render(request, 'move.html', {'id' : id})
             except:
                 raise Http404("Order ID not found")    
-        else:
-            raise Http404("Order ID not found")
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
@@ -146,14 +154,11 @@ def fail(request):
         if form.is_valid():
             id = form.cleaned_data['id']
             try:
-                # global DELIVERY_SERVICE
-                # DELIVERY_SERVICE.deleteOrder(id)
-                # ?????????????    
+                global DELIVERY_SERVICE
+                DELIVERY_SERVICE.reportFail(id)
                 return render(request, 'report_fail.html', {'id' : id})
             except:
                 raise Http404("Order ID not found")    
-        else:
-            raise Http404("Order ID not found")
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})

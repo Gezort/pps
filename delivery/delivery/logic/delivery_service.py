@@ -2,8 +2,16 @@ from .oper import Operator
 from .order import Order
 from .warehouse import Warehouse
 from .orders_queue import OrdersQueue
+from .item import Item
 
 class DeliveryService:
+
+    ITEMS = {
+        0 : Item(0, 1, "item1", 1),
+        1 : Item(1, 2, "item2", 1),
+        2 : Item(2, 1, "item3", 2)
+    }
+
     def __init__(self, graph):
         self.graph = graph
         self.orders_dict = {}
@@ -14,11 +22,12 @@ class DeliveryService:
     def getOrderInfo(self, order_id):
         return self.orders_dict[order_id].getCurrentLeg()
 
-    def addItemToOrder(self, order_id, item):
-        self.orders_dict[order_id].addItem(item)
+    def addItemToOrder(self, order_id, item_id):
+        global ITEMS
+        self.orders_dict[order_id].addItem(ITEMS[item_id])
 
-    def deleteItemFromOrder(self, order_id, item):
-        self.orders_dict[order_id].deleteItem(item)
+    def deleteItemFromOrder(self, order_id, item_id):
+        self.orders_dict[order_id].deleteItem(item_id)
 
     def buildRouteForOrder(self, order_id):
         route = Operator().makeRoute(self.orders_dict[order_id], self.graph)

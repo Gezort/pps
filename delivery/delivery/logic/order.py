@@ -1,10 +1,6 @@
 from datetime import datetime
 from enum import Enum
 
-class OrderStatus(Enum):
-    launched = 'launched'
-    delivered = 'delivered'
-
 class Criteria(Enum):
     time = 'time'
     cost = 'cost'
@@ -16,7 +12,6 @@ class Order():
         self.creationTime = time
         self.itemList = items
         self.route = route
-        self.status = 0
         self.criteria = criteria
         self.startLocation = start
         self.finishLocation = end
@@ -30,10 +25,10 @@ class Order():
     def atEnd(self):
         return self.getLocation() is None
 
-    def deleteItem(self, item):
+    def deleteItem(self, item_id):
         item_pos = 0
         for i in range(len(self.itemList)):
-            if self.itemList[i] == item:
+            if self.itemList[i].id == item_id:
                 item_pos = i
                 break
         self.itemList = self.itemList[:item_pos] + self.itemList[item_pos + 1:]

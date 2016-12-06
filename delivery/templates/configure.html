@@ -6,6 +6,11 @@
 {% block body %}
 <a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
 <a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
-<p> Configure </p>
 
+<!-- <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Configure" />
+</form>
+ -->
 {% endblock %}

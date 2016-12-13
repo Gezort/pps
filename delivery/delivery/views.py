@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_GET, require_POST
 from django.http import Http404, HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 from .forms import OrderIdForm, ConfigureOrderForm
 from .logic.delivery_service import DeliveryService
 from .logic.graph import Graph
@@ -12,10 +13,12 @@ from .logic.list_items import ITEMS
 DELIVERY_SERVICE = DeliveryService(Graph())
 
 
-def check_user(request, group):
+def check_user(request, group, name=None):
     user = request.user
     if  user is None or (not user.is_authenticated()) or str(user.groups.all()[0]) != group:
         raise Http404("You can't access this page")
+    if name and user.username != name:
+        raise PermissionDenied('name')
 
 
 @require_GET
@@ -193,6 +196,7 @@ def move(request):
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = int(form.cleaned_data['id'])
+            check_user(request, 'couriers', id)
             try:
                 global DELIVERY_SERVICE
                 print ('MOVE')
@@ -213,6 +217,7 @@ def fail(request):
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = int(form.cleaned_data['id'])
+            check_user(request, 'couriers', id)
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.reportFail(id, True)

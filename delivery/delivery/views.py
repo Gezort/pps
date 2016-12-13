@@ -208,7 +208,7 @@ def move(request):
 
 
 def fail(request):
-    check_user(request, 'users')
+    check_user(request, 'couriers')
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():

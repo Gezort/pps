@@ -215,7 +215,7 @@ def fail(request):
             id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
-                DELIVERY_SERVICE.reportFail(id)
+                DELIVERY_SERVICE.reportFail(id, True)
                 return render(request, 'report_fail.html', {'id' : id})
             except:
                 raise Http404("Order ID not found")    

@@ -94,9 +94,17 @@ class DeliveryService:
         
     def reportFail(self, order_id, change_available):
         if change_available:
-            self.orders_dict[order_id].setStartLocation(
-                    self.orders_dict[order_id].getLocation().getFromId())
+            print(1)
+            cur_loc = self.orders_dict[order_id].getLocation()
+            print(2)
+            cur_loc_id = cur_loc.getFromId()
+            print(3)
+            self.graph.legs.remove(cur_loc)
+            print(4)
+            self.orders_dict[order_id].setStartLocation(cur_loc_id)
+            print(5)
             self.buildRouteForOrder(order_id)
+            print(6)
 
     def getHistory(self):
         return self.history.showHistory()

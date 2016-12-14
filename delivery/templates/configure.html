@@ -80,7 +80,7 @@
             <b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}
         </p>
 
-        {% if route is not None %}
+        {% if route %}
         <p>
 
             <b style="color: #5378FF;">Построенный путь :</b> 
@@ -88,7 +88,7 @@
         </p>
         <p> <b style="color: #5378FF;"> Стоимость ($) :</b> {{ cost }}</p>
         <p> <b style="color: #5378FF;"> Время (дни) :</b> {{ time }}</p>
-        {%endif%}
+        {% endif %}
 
 
 <!--         <p>

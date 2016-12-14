@@ -18,10 +18,10 @@ DELIVERY_SERVICE = DeliveryService(Graph())
 @wraps
 def shows_error(func):
     def decorated(*args, **kwargs):
-        #try:
-        return func(*args, **kwargs)
-        #except Exception as e:
-        #    return HttpResponse(str(e))
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            return HttpResponse(str(e))
 
 def check_user(request, group, name=None):
     print(name)
@@ -82,10 +82,10 @@ def track(request):
             id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
-                location = DELIVERY_SERVICE.getLocationInfo(id)
+                location = DELIVERY_SERVICE.getLocation(id)
                 if location is None:
-                    raise
-                return render(request, 'track_order.html', {'location' : location, 
+                    raise Http404("Order ID not found")
+                return render(request, 'track_order.html', {'location' : location.getId(), 
                     'order_id': id})
             except:
                 raise Http404("Order ID not found")    
@@ -124,12 +124,12 @@ def configure_order(request, id):
     finish = order.finishLocation
     cost = order.cost
     time = order.time
-    
+    total_cost = sum(ITEMS[i].cost for i in items)
     start = '-' if start is None else str(start)
     finish = '-' if finish is None else str(finish)
     route = '-' if route is None else str(route)
     items = '-' if items is None else str(items)
-    cost = '-' if cost is None else str(cost)
+    cost = '-' if cost is None else str(cost * total_cost)
     time = '-' if time is None else str(time)
     context = {'order_id' : id, 'items' : items, 'start' : start, 
                         'finish' : finish, 'route' : route, 'criteria' : criteria,
@@ -236,7 +236,7 @@ def move(request):
                 order = DELIVERY_SERVICE.orders_dict[id]
             except:
                 raise Http404("Order ID not found")    
-            check_user(request, 'couriers', str(order.getLocation().getId()))
+            check_user(request, 'couriers', 'cour_' + str(order.getLocation().getId()))
             try:              
                 print ('MOVE')
                 print (DELIVERY_SERVICE.orders_dict)
@@ -262,7 +262,7 @@ def fail(request):
                 order = DELIVERY_SERVICE.orders_dict[id]
             except:
                 raise Http404("Order ID not found")    
-            check_user(request, 'couriers', str(order.getLocation().getId()))
+            check_user(request, 'couriers', 'cour_' + str(order.getLocation().getId()))
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.reportFail(id, True)

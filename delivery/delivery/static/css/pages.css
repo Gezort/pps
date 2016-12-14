@@ -8,6 +8,7 @@ body {
 	font-weight: normal;
 	overflow: auto;
 	background: url('../img/air_routes-2.png') fixed no-repeat left bottom;
+	background-size: cover;
 }
 
 .logo-img {

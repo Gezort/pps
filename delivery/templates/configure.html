@@ -4,82 +4,95 @@
 {% endblock %}
 
 {% block body %}
-<a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
-<a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
 
+<div class="create-container">
 <form action="{% url 'set_start' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="number" step="1" name="location">
-        <input type="submit" value="Set start location">
-    </p>
-</form>
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+            <input class="btn btn-primary" type="submit" value="Начало пути">
+        </p>
+    </form>
 
-<form action="{% url 'set_finish' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="number" step="1" name="location">
-        <input type="submit" value="Set finish location">
-    </p>
-</form>
+    <form action="{% url 'set_finish' %}" method="post" class="form-group">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+            <input class="btn btn-primary" type="submit" value="Конец пути">
+        </p>
+    </form>
+    <div class="paragraph">Оптимизация</div>
+        <form action="{% url 'set_criteria' %}" method="post" class="form-group">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value={{ order_id }}>
+            <label style="margin-right: 30px;"> <input type="radio" name="criteria" value="0" class="form-control"> Время</label>
+            <label style="margin-right: 30px;"> <input type="radio" name="criteria" value="1" class="form-control">Стоимость</label>
+            <input class="btn btn-primary" type="submit" value="Оптимизировать">
+        </form>
 
-<form action="{% url 'set_criteria' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="radio" name="criteria" value="0"> time
-        <input type="radio" name="criteria" value="1"> cost
-        <input type="submit" value="Set criteria">
-    </p>
-</form>
+    <div class="paragraph">Товары</div>
+    <form action="{% url 'add_item' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input type="number" step="1" name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+            <input class="btn btn-primary" type="submit" value="Добавить">
+        </p>
+    </form>
 
-<form action="{% url 'add_item' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="number" step="1" name="item_id">
-        <input type="submit" value="Add item">
-    </p>
-</form>
+    <form action="{% url 'delete_item' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input type="number" step="1" name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+            <input class="btn btn-primary" type="submit" value="Удалить">
+        </p>
+    </form>
 
-<form action="{% url 'delete_item' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="number" step="1" name="item_id">
-        <input type="submit" value="Delete item">
-    </p>
-</form>
+    <form action="{% url 'build_route' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input class="btn btn-great" type="submit" value="Построить путь">
+        </p>
+    </form>
 
-<form action="{% url 'build_route' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="order_id" value={{ order_id }}>
-    <p>
-        <input type="submit" value="Build route">
-    </p>
-</form>
+    <form action="{% url 'delete' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value={{ order_id }}>
+        <p>
+            <input class="btn btn-great" type="submit" value="Удалить заказ">
+        </p>
+    </form>
+    <!-- <a href="{% url 'delete' %}" class="btn btn-great">Удалить</a> -->
+</div>
 
-<p>
-    Current items : {{ items }}
-</p>
-<p>
-    Current start : {{ start }}
-</p>
-<p>
-    Current finish : {{ finish }}
-</p>
-<p>
-    Current route : {{ route }}
-</p>
-<p>
-    Current criteria : {{ criteria }}
-</p>
+<div class="create-container" style="font-size: 16px;">
+        <p>
+            <b style="color: #5378FF;"" >Критерий :</b> {{criteria }}<span style='padding-left:30px;'> </span>
+            <b style="color: #5378FF;">Начало :</b> {{ start }} <span style='padding-left:30px;'> </span>
+            <b style="color: #5378FF;">Конец :</b> {{ finish }}
+        </p>
+        
+        <p>
+            <b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}
+        </p>
 
-<p>
-    Items pool : {{ pool }}
-</p>
+        <p>
+            <b style="color: #5378FF;">Построенный путь :</b> {{ route }}
+        </p>
+
+<!--         <p>
+            Items pool : {{ pool }}
+        </p>
+
+ -->
+        
+
+        <a href="{% url 'launch' %}" class="btn btn-great">Запустить заказ</a>
+ </div>
 
 
 {% endblock %}

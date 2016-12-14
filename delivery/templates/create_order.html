@@ -4,8 +4,10 @@
 {% endblock %}
 
 {% block body %}
-<a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
-<a href="{% url 'homepage' %}" class="btn btn-primary">Home</a>
-<p> Created. ID: {{ id }} </p>
+<div class="create-container" style="width: 100%; text-align: center; font-size: 24px;">
+	<p> Номер заказа: {{ id }} </p>
+
+	<a href="{% url 'configure' %}" class="btn btn-primary" style="font-size: 20px;">Настроить заказ</a>
+</div>
 
 {% endblock %}

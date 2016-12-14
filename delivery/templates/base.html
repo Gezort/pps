@@ -20,10 +20,25 @@
     <title>{% block title %}{% endblock %}</title>
 
     <link href="{% static "css/bootstrap/css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "css/pages.css" %}" rel="stylesheet">
 
 </head>
 <body>
+<nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #000">
+
+    <a href="{% url 'homepage' %}" class="nav navbar-nav navbar-left" style="margin-left: 20px; margin-top: 10px">
+        <div class="logo-img"></div>
+        <div class="logo-name">Доставим Все</div>
+    </a>
+{% if request.user.is_authenticated  %}
+    <div class="nav navbar-nav navbar-right" style="margin-right: 50px; margin-top: 10px">
+        <a href="{% url 'login:logout' 'index ' %}" class="btn btn-logout">Выйти</a>
+    </div>
+{% endif %}
+</nav>
+<div class="main_container">
     {% block body %}
     {% endblock %}
+</div>  
 </body>
 </html>

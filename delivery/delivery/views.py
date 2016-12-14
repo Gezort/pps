@@ -54,38 +54,22 @@ def create(request):
     return render(request, 'create_order.html', {'id' : order_id})
 
 @shows_error
+@require_POST
 def delete(request):
-    check_user(request, 'users')
-    if request.method == 'POST':
-        form = OrderIdForm(request.POST)
-        if form.is_valid():
-            id = int(form.cleaned_data['id'])
-            try:
-                global DELIVERY_SERVICE
-                DELIVERY_SERVICE.deleteOrder(id)    
-                return render(request, 'delete_order.html', {'id' : id})
-            except:
-                raise Http404("Order ID not found")    
-    else:
-        form = OrderIdForm()
-    return render(request, 'input_order_id.html', {'form' : form})
+    id = int(request.POST['order_id'])
+    global DELIVERY_SERVICE
+    DELIVERY_SERVICE.deleteOrder(id)    
+    # return render(request, 'delete_order.html', {'id' : id})
+    return render(request, 'homepage.html') 
 
 @shows_error
+@require_POST
 def launch(request):
-    check_user(request, 'users')
-    if request.method == 'POST':
-        form = OrderIdForm(request.POST)
-        if form.is_valid():
-            id = int(form.cleaned_data['id'])
-            try:
-                global DELIVERY_SERVICE
-                launched = DELIVERY_SERVICE.launchOrder(id)
-                return render(request, 'launch_order.html', {'launched' : launched})
-            except:
-                raise Http404("Order does not exist or not configured") 
-    else:
-        form = OrderIdForm()
-    return render(request, 'input_order_id.html', {'form' : form})
+    id = int(request.POST['order_id'])    
+    global DELIVERY_SERVICE
+    launched = DELIVERY_SERVICE.launchOrder(id)
+    # return render(request, 'launch_order.html', {'launched' : launched})
+    return render(request, 'homepage.html')
 
 @shows_error
 def track(request):

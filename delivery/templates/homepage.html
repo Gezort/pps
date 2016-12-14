@@ -3,28 +3,44 @@
 {% block title %}
 {% endblock %}
 
+{% block nav %}
+
+<!-- {% if request.user.is_authenticated  %}
+    <div class="nav navbar-nav navbar-left" style="margin-left: 20px; margin-top: 10px">
+        <div class="logo-img"></div>
+        <div class="logo-name">Доставим Все</div>
+    </div>
+    <div class="nav navbar-nav navbar-right" style="margin-right: 50px; margin-top: 10px">
+        <a href="{% url 'login:logout' 'index ' %}" class="btn btn-logout">Выйти</a>
+    </div>
+{% endif %} -->
+
+{% endblock %}
+
 {% block body %}
 
 {% if request.user.is_authenticated  %}
     {% if is_courier %}
+    <div class="btns-container">
         <a href="{% url 'fail' %}" class="btn btn-primary">Report fail</a>
 
         <a href="{% url 'move' %}" class="btn btn-primary">Move order</a>
+    </div>
     {% else %}
-        <a href="{% url 'create' %}" class="btn btn-primary">Create order</a>
-
-        <a href="{% url 'delete' %}" class="btn btn-primary">Delete order</a>
-
-        <a href="{% url 'configure' %}" class="btn btn-primary">Configure order</a>
-
-        <a href="{% url 'launch' %}" class="btn btn-primary">Launch order</a>
+    <div class="btns-container">
+        <a href="{% url 'create' %}" class="btn btn-main hvr-ripple-out">Создать заказ</a>
         
-        <a href="{% url 'track' %}" class="btn btn-primary">Track order</a>
+        <a href="{% url 'track' %}" class="btn btn-main hvr-ripple-out">Отследить заказ</a>
 
-        <a href="{% url 'lookup' %}" class="btn btn-primary">Lookup history</a>
+        <a href="{% url 'lookup' %}" class="btn btn-main hvr-ripple-out">Мои заказы</a>
+
+        <!-- <a href="{% url 'configure' %}" class="btn btn-main hvr-ripple-out">Настроить заказ</a> -->
+
+<!--         <a href="{% url 'delete' %}" class="btn btn-main v">Удалить</a>
+
+        <a href="{% url 'launch' %}" class="btn btn-main hvr-ripple-out">Запустить заказ</a>
+ -->    </div>
     {% endif %}
-
-    <a href="{% url 'login:logout' 'index' %}" class="btn btn-primary">Logout</a>
 {% endif %}
 
 {% endblock %}

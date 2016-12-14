@@ -2,39 +2,50 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_GET, require_POST
 from django.http import Http404, HttpResponseRedirect
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured, ObjectDoesNotExist
 from .forms import OrderIdForm, ConfigureOrderForm
 from .logic.delivery_service import DeliveryService
 from .logic.graph import Graph
 from .logic.item import Item
 from .logic.order import Criteria
 from .logic.list_items import ITEMS 
+from functools import wraps
 
 DELIVERY_SERVICE = DeliveryService(Graph())
 
+@wraps
+def shows_error(func):
+    def decorated(*args, **kwargs):
+        #try:
+        return func(*args, **kwargs)
+        #except Exception as e:
+        #    return HttpResponse(str(e))
 
 def check_user(request, group, name=None):
+    print(name)
     user = request.user
+    print(user.username)
     if  user is None or (not user.is_authenticated()) or str(user.groups.all()[0]) != group:
-        raise Http404("You can't access this page")
-    if name and user.username != name:
-        raise PermissionDenied('name')
+        raise PermissionDenied("You can't access this page")
+    if name is not None and user.username != name:
+        raise PermissionDenied(name)
 
-
+@shows_error
 @require_GET
 def index(request):
     return render(request, 'index.html')
 
 
+@shows_error
 @require_GET
 def homepage(request):
     user = request.user
     if  user is None or (not user.is_authenticated()):
-        raise Http404("You aren't authenticated")
+        raise PermissionDenied("You aren't authenticated")
     context={'is_courier' : str(request.user.groups.all()[0]) == 'couriers'}
     return render(request, 'homepage.html', context=context)
 
-
+@shows_error
 @require_GET
 def create(request):
     check_user(request, 'users')
@@ -42,7 +53,7 @@ def create(request):
     order_id = DELIVERY_SERVICE.addOrder()
     return render(request, 'create_order.html', {'id' : order_id})
 
-
+@shows_error
 def delete(request):
     check_user(request, 'users')
     if request.method == 'POST':
@@ -59,7 +70,7 @@ def delete(request):
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
 
-
+@shows_error
 def launch(request):
     check_user(request, 'users')
     if request.method == 'POST':
@@ -76,7 +87,7 @@ def launch(request):
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
 
-
+@shows_error
 def track(request):
     check_user(request, 'users')
     if request.method == 'POST':
@@ -95,7 +106,7 @@ def track(request):
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
 
-
+@shows_error
 def configure(request):
     check_user(request, 'users')
     if request.method == 'POST':
@@ -107,7 +118,7 @@ def configure(request):
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
 
-
+@shows_error
 def configure_order(request, id):
     check_user(request, 'users')
     global DELIVERY_SERVICE
@@ -131,6 +142,7 @@ def configure_order(request, id):
                         'pool' : str(ITEMS)}
     return render(request, 'configure.html', context)
 
+@shows_error
 @require_POST
 def add_item(request):
     order_id = int(request.POST['order_id'])
@@ -139,6 +151,7 @@ def add_item(request):
     DELIVERY_SERVICE.addItemToOrder(order_id, item_id)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@shows_error
 @require_POST
 def del_item(request):
     order_id = int(request.POST['order_id'])
@@ -147,6 +160,7 @@ def del_item(request):
     DELIVERY_SERVICE.deleteItemFromOrder(order_id, item_id)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@shows_error
 @require_POST
 def set_start_location(request):
     order_id = int(request.POST['order_id'])
@@ -155,6 +169,7 @@ def set_start_location(request):
     DELIVERY_SERVICE.setStartLocation(order_id, location)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@shows_error
 @require_POST
 def set_finish_location(request):
     order_id = int(request.POST['order_id'])
@@ -163,45 +178,57 @@ def set_finish_location(request):
     DELIVERY_SERVICE.setFinishLocation(order_id, location)
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@shows_error
 @require_POST
 def set_criteria(request):
-    order_id = int(request.POST['order_id'])
-    criteria = int(request.POST['criteria'])
-    if criteria == 0:
-        criteria = Criteria.time
-    else:
-        criteria = Criteria.cost
-    global DELIVERY_SERVICE
-    DELIVERY_SERVICE.setCriteria(order_id, criteria)
-    return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+    try:
+        order_id = int(request.POST['order_id'])
+        criteria = int(request.POST['criteria'])
+        if criteria == 0:
+            criteria = Criteria.time
+        else:
+            criteria = Criteria.cost
+        global DELIVERY_SERVICE
+        DELIVERY_SERVICE.setCriteria(order_id, criteria)
+        return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+    except:
+        return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
 
 @require_POST
+@shows_error
 def build_route(request):
     order_id = int(request.POST['order_id'])
     global DELIVERY_SERVICE
     try:
         DELIVERY_SERVICE.buildRouteForOrder(order_id)
     except:
-        Http404('Cant build route')
+        raise ObjectDoesNotExist('Cant build route')
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
 
+@shows_error
 def lookup(request):
     check_user(request, 'users')
     return render(request, 'lookup.html')
 
-
+@shows_error
 def move(request):
+    global DELIVERY_SERVICE
     check_user(request, 'couriers')
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = int(form.cleaned_data['id'])
-            check_user(request, 'couriers', id)
             try:
-                global DELIVERY_SERVICE
+                order = DELIVERY_SERVICE.orders_dict[id]
+            except:
+                raise Http404("Order ID not found")    
+            check_user(request, 'couriers', str(order.getLocation().getId()))
+            try:              
                 print ('MOVE')
                 print (DELIVERY_SERVICE.orders_dict)
                 DELIVERY_SERVICE.moveOrder(id)
+                print ('MOVED')
                 return render(request, 'move.html', {'id' : id})
             except Exception as e:
                 print (e)
@@ -210,14 +237,18 @@ def move(request):
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
 
-
+@shows_error
 def fail(request):
     check_user(request, 'couriers')
     if request.method == 'POST':
         form = OrderIdForm(request.POST)
         if form.is_valid():
             id = int(form.cleaned_data['id'])
-            check_user(request, 'couriers', id)
+            try:
+                order = DELIVERY_SERVICE.orders_dict[id]
+            except:
+                raise Http404("Order ID not found")    
+            check_user(request, 'couriers', str(order.getLocation().getId()))
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.reportFail(id, True)

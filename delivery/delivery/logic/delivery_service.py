@@ -2,6 +2,9 @@ from .oper import Operator
 from .order import Order
 from .warehouse import Warehouse
 from .orders_queue import OrdersQueue
+from .history import OrdersHistory, CurrentOrdersHistory
+
+import time
 
 class DeliveryService:
 
@@ -11,6 +14,8 @@ class DeliveryService:
         self.orders_cnt = 0
         self.orders_queue = OrdersQueue()
         self.warehouse = Warehouse()
+        self.history = OrdersHistory()
+        self.current_history = CurrentOrdersHistory()
 
     def getOrderInfo(self, order_id):
         return self.orders_dict[order_id].getCurrentLeg()
@@ -29,7 +34,12 @@ class DeliveryService:
         return self.orders_dict[order_id].getLocation()
 
     def transferHistory(self, order_id):
+        print ("Transfer history")
+        entries = self.current_history.query(order_id, 0, time.time())
+        for entry in entries:
+            self.history.add(entry[0], entry[1], entry[2])
         print("MOCK transferHistory for order_id = {}".format(order_id))
+        print("HISTORY:", self.history)
 
     def setStartLocation(self, order_id, start_location):
         assert order_id in self.orders_dict
@@ -54,7 +64,7 @@ class DeliveryService:
     
     def deleteOrder(self, order_id):
         del self.orders_dict[order_id]
-        # self.current_history.delete(order_id)
+        self.current_history.delete(order_id)
 
     def launchOrder(self, order_id):
         print (self.orders_dict)
@@ -66,7 +76,10 @@ class DeliveryService:
         return True
 
     def moveOrder(self, order_id):
+        self.current_history.add(order_id, time.time(), self.getLocation(order_id).getId())
+        print("actually added")
         self.orders_dict[order_id].move()
+        
         if self.orders_dict[order_id].atEnd():
             self.transferHistory(order_id)
             self.deleteOrder(order_id)

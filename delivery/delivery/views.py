@@ -12,6 +12,7 @@ from .logic.list_items import ITEMS
 from functools import wraps
 import networkx as nx
 import matplotlib.pyplot as plt
+import datetime
 
 DELIVERY_SERVICE = DeliveryService(Graph())
 
@@ -222,7 +223,12 @@ def lookup(request):
     check_user(request, 'users')
     global DELIVERY_SERVICE
     history = DELIVERY_SERVICE.getHistory()
-    return render(request, 'lookup.html', {'history': history})
+    def format_history(entry):
+        return '\n'.join(['Order:%s' % entry[0]] + 
+                         [("Leg: %s Time: %s") % (e[1], datetime.datetime.fromtimestamp(e[0])) for e in entry[1]])
+    hist_str = '\n\n'.join(map(format_history, history.items()))
+
+    return render(request, 'lookup.html', {'history': hist_str})
 
 @shows_error
 def move(request):

@@ -8,7 +8,7 @@ class Criteria(Enum):
 
 class Order():
 
-    def __init__(self, id, time, items, route, start, end, criteria=Criteria('time')):
+    def __init__(self, id, time, items, route, start, end, cost=None, all_time=None, criteria=Criteria('time')):
         self.id = id
         self.creationTime = time
         self.itemList = items
@@ -16,9 +16,14 @@ class Order():
         self.criteria = criteria
         self.startLocation = start
         self.finishLocation = end
+        self.cost = cost
+        self.time = all_time
 
     def getLocation(self):
         return None if self.route is None else self.route.getCurrentLocation()
+
+    def getLocationInfo(self):
+        return None if self.route is None else self.route.getCurrentLocationInfo()
 
     def addItem(self, item_id):
         self.itemList.append(item_id)
@@ -68,6 +73,18 @@ class Order():
 
     def setFinishLocation(self, value):
         self.finishLocation = value
+
+    def setCost(self, cost):
+        self.cost = cost
+
+    def getCost(self):
+        return self.cost
+
+    def setTime(self, time):
+        self.time = time
+
+    def getTime(self):
+        return self.time
 
     def __repr__(self):
         return "Order id = {} creationTime = {} \n route = {} startLocation = {}\

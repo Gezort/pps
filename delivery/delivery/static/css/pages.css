@@ -144,3 +144,11 @@ body {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
+
+.route-img {
+	height: 300px;
+	width: 350px;
+	background-size: 120% 120%;
+	background-repeat: no-repeat;
+	background-position: center;
+}

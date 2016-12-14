@@ -4,11 +4,13 @@
 {% endblock %}
 
 {% block body %}
-<div class="create-container">
-    Current location is: {{ location }}
+<div class="create-container" style="font-size: 20px">
+	<p> <b style="color: #5378FF">Заказ: </b>{{ order_id }}</p>
+    <p> <b style="color: #5378FF"> Текущее положение: </b>{{ location }}</p>
 </div>
 
 <div class="create-container">
+<div class="route-img" style="background-image: url('../static/img/{{order_id}}.png'"></div>
 </div>
 
 {% endblock %}

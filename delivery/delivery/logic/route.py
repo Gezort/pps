@@ -7,6 +7,9 @@ class Route():
     def getCurrentLocation(self):
         return None if self.currentLocation == len(self.listLegs) else self.listLegs[self.currentLocation]
 
+    def getCurrentLocationInfo(self):
+        return None if self.currentLocation == len(self.listLegs) else self.listLegs[self.currentLocation].getName()
+
     def move(self):
         self.currentLocation += 1
 
@@ -15,3 +18,11 @@ class Route():
 
     def getLegsIds(self):
         return [edge.getId() for edge in self.listLegs]
+
+    def getCostAndTime(self):
+        sumCost = 0
+        sumTime = 0
+        for leg in self.listLegs:
+            sumCost += leg.getCost()
+            sumTime += leg.getTime()
+        return sumCost, sumTime

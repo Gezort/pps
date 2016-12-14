@@ -80,9 +80,16 @@
             <b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}
         </p>
 
+        {% if route is not None %}
         <p>
-            <b style="color: #5378FF;">Построенный путь :</b> {{ route }}
+
+            <b style="color: #5378FF;">Построенный путь :</b> 
+            <div class="route-img" style="background-image: url('../static/img/{{order_id}}.png'"></div>                
         </p>
+        <p> <b style="color: #5378FF;"> Стоимость ($) :</b> {{ cost }}</p>
+        <p> <b style="color: #5378FF;"> Время (дни) :</b> {{ time }}</p>
+        {%endif%}
+
 
 <!--         <p>
             Items pool : {{ pool }}

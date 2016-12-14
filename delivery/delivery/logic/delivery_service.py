@@ -27,11 +27,19 @@ class DeliveryService:
         self.orders_dict[order_id].deleteItem(item_id)
 
     def buildRouteForOrder(self, order_id):
-        route = Operator().makeRoute(self.orders_dict[order_id], self.graph)
+        route, route_description = Operator().makeRoute(self.orders_dict[order_id], self.graph)
         self.orders_dict[order_id].setRoute(route)
+        cost, time = route.getCostAndTime()
+        self.orders_dict[order_id].setCost(cost)
+        self.orders_dict[order_id].setTime(time)
+        return route_description
+
 
     def getLocation(self, order_id):
         return self.orders_dict[order_id].getLocation()
+
+    def getLocationInfo(self, order_id):
+        return self.orders_dict[order_id].getLocationInfo()        
 
     def transferHistory(self, order_id):
         print ("Transfer history")

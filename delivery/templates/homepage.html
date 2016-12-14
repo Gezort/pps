@@ -8,10 +8,10 @@
 
 {% if request.user.is_authenticated  %}
     {% if is_courier %}
-    <div class="btns-container">
-        <a href="{% url 'fail' %}" class="btn btn-primary">Report fail</a>
+    <div class="btns-container" style="width:60%">
+        <a href="{% url 'fail' %}" class="btn btn-main hvr-ripple-out">Report fail</a>
 
-        <a href="{% url 'move' %}" class="btn btn-primary">Move order</a>
+        <a href="{% url 'move' %}" class="btn btn-main hvr-ripple-out">Move order</a>
     </div>
     {% else %}
     <div class="btns-container">

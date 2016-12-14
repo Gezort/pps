@@ -36,12 +36,15 @@ class Operator:
             return None
         print("dist {}".format(dist[cur]))
         result = []
+        result_with_names = [] #[[name_vertex_1, name_vertex_2, name_edge], ... ]
         while True:
             if cur == start:
                 break
             result.append(fr[cur])
             cur = fr[cur].getFromId()
-        return Route(result[::-1])
+        for leg in result:
+            result_with_names.append([leg.getFromName(), leg.getToName(), leg.getName()])
+        return Route(result[::-1]), result_with_names
 
     def makeTimeOptimalRoute(self, order, graph):
         makeRoute(order, graph, "time") 

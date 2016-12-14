@@ -10,6 +10,8 @@ from .logic.item import Item
 from .logic.order import Criteria
 from .logic.list_items import ITEMS 
 from functools import wraps
+import networkx as nx
+import matplotlib.pyplot as plt
 
 DELIVERY_SERVICE = DeliveryService(Graph())
 
@@ -80,10 +82,11 @@ def track(request):
             id = int(form.cleaned_data['id'])
             try:
                 global DELIVERY_SERVICE
-                location = DELIVERY_SERVICE.getLocation(id)
+                location = DELIVERY_SERVICE.getLocationInfo(id)
                 if location is None:
                     raise
-                return render(request, 'track_order.html', {'location' : location})
+                return render(request, 'track_order.html', {'location' : location, 
+                    'order_id': id})
             except:
                 raise Http404("Order ID not found")    
     else:
@@ -119,13 +122,18 @@ def configure_order(request, id):
     criteria = 'time' if order.criteria == Criteria.time else 'cost'
     start = order.startLocation
     finish = order.finishLocation
+    cost = order.cost
+    time = order.time
     
     start = '-' if start is None else str(start)
     finish = '-' if finish is None else str(finish)
     route = '-' if route is None else str(route)
     items = '-' if items is None else str(items)
+    cost = '-' if cost is None else str(cost)
+    time = '-' if time is None else str(time)
     context = {'order_id' : id, 'items' : items, 'start' : start, 
                         'finish' : finish, 'route' : route, 'criteria' : criteria,
+                        'cost' : cost, 'time' : time,
                         'pool' : str(ITEMS)}
     return render(request, 'configure.html', context)
 
@@ -188,7 +196,23 @@ def build_route(request):
     order_id = int(request.POST['order_id'])
     global DELIVERY_SERVICE
     try:
-        DELIVERY_SERVICE.buildRouteForOrder(order_id)
+        route_description = DELIVERY_SERVICE.buildRouteForOrder(order_id)
+        print("ROUTE: ", route_description)
+        G = nx.DiGraph()
+        edge_labels = {}
+        node_labels = {}
+        for edge in route_description:
+            G.add_edges_from([(edge[0],edge[1])], weight=1)
+            edge_labels[(edge[0], edge[1])] = edge[2]
+            node_labels[edge[0]] = edge[0]
+        pos=nx.spring_layout(G)
+        nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
+        nx.draw_networkx_labels(G,pos,node_labels,font_size=16)
+        nx.draw(G,pos,node_size=1500,edge_color='black', node_color='blue')
+        # plt.show()
+        plt.savefig("delivery/static/img/" + str(order_id) + ".png", format="PNG")
+        plt.close()
+        G.clear()
     except:
         raise ObjectDoesNotExist('Cant build route')
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))

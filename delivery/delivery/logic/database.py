@@ -15,3 +15,7 @@ class Database():
 
     def delete(self, orderId):
         self.storage[orderId] = []
+
+    def showDatabase(self):
+        print("STORAGE:", self.storage)
+        return self.storage

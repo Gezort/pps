@@ -98,3 +98,5 @@ class DeliveryService:
                     self.orders_dict[order_id].getLocation().getFromId())
             self.buildRouteForOrder(order_id)
 
+    def getHistory(self):
+        return self.history.showHistory()

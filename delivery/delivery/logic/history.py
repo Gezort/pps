@@ -12,6 +12,9 @@ class OrdersHistory():
     def query(self, orderId, beginTime, endTime):
         return self.database.query(orderId, beginTime, endTime)
 
+    def showHistory(self):
+    	return self.database.showDatabase()
+
 
 class CurrentOrdersHistory(OrdersHistory):
     

@@ -220,7 +220,9 @@ def build_route(request):
 @shows_error
 def lookup(request):
     check_user(request, 'users')
-    return render(request, 'lookup.html')
+    global DELIVERY_SERVICE
+    history = DELIVERY_SERVICE.getHistory()
+    return render(request, 'lookup.html', {'history': history})
 
 @shows_error
 def move(request):
@@ -240,7 +242,8 @@ def move(request):
                 print (DELIVERY_SERVICE.orders_dict)
                 DELIVERY_SERVICE.moveOrder(id)
                 print ('MOVED')
-                return render(request, 'move.html', {'id' : id})
+                return redirect(reverse(homepage))
+                # return render(request, 'move.html', {'id' : id})
             except Exception as e:
                 print (e)
                 raise Http404("Order ID not found")    
@@ -263,6 +266,7 @@ def fail(request):
             try:
                 global DELIVERY_SERVICE
                 DELIVERY_SERVICE.reportFail(id, True)
+                # return redirect(reverse(homepage))
                 return render(request, 'report_fail.html', {'id' : id})
             except:
                 raise Http404("Order ID not found")    

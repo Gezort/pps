@@ -32,10 +32,10 @@ def login(request, next):
         return render(request, 'login.html', {'login_error': login_error, 'user_form': UserForm(), \
                                                  'group_form': GroupForm(), 'redirect_to' : 'homepage'})
 
-def logout(request, next):
+def logout(request):
     auth.logout(request)
-    redirect_to = next
-    return redirect(redirect_to)  
+    # redirect_to = next
+    return render(request, 'index.html')
 
 
 def register(request, next):

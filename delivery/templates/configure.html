@@ -91,7 +91,15 @@
  -->
         
 
-        <a href="{% url 'launch' %}" class="btn btn-great">Запустить заказ</a>
+        <!-- <a href="{% url 'launch' %}" class="btn btn-great"></a> -->
+
+        <form action="{% url 'launch' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value={{ order_id }}>
+            <p>
+                <input class="btn btn-great" type="submit" value="Запустить заказ">
+            </p>
+        </form>
  </div>
 
 

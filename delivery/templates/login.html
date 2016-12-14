@@ -14,7 +14,7 @@
 
     <div class="col-md-6 col-sm-offset-3 container">
       <form class="form-signin" action="{% url 'login:login' redirect_to|urlencode %}" method="post" >
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 class="form-signin-heading" style="color:#fff">Войти</h2>
         {% csrf_token %}
         {{ user_form.username | add_class:"form-control"|append_attr:"placeholder:Username" }}
         {{ user_form.password | add_class:"form-control"|append_attr:"placeholder:Password" }}

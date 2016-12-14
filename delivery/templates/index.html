@@ -6,10 +6,6 @@
 
 {% block body %}
 {% if request.user.is_authenticated %}
-    <a href="{% url 'login:logout' request.get_full_path %}" class="btn btn-primary">Logout</a>
-{% else %}
-    <a href="{% url 'login:login' request.get_full_path %}" class="btn btn-primary">Login</a>
-    <a href="{% url 'login:register' request.get_full_path %}" class="btn btn-primary">Register</a>
 {% endif %}
 
 {% endblock %}

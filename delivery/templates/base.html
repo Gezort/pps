@@ -32,7 +32,14 @@
     </a>
 {% if request.user.is_authenticated  %}
     <div class="nav navbar-nav navbar-right" style="margin-right: 50px; margin-top: 10px">
-        <a href="{% url 'login:logout' 'index ' %}" class="btn btn-logout">Выйти</a>
+        <a href="{% url 'login:logout' %}" class="btn btn-logout">Выйти</a>
+    </div>
+{% else %}
+    <div class="nav navbar-nav navbar-right" style="margin-right: 50px; margin-top: 10px">
+        <a href="{% url 'login:login' request.get_full_path %}" class="btn btn-logout">Войти</a>
+    </div>
+    <div class="nav navbar-nav navbar-right" style="margin-right: 20px; margin-top: 10px">
+        <a href="{% url 'login:register' request.get_full_path %}" class="btn btn-logout">Зарегистрироваться</a>
     </div>
 {% endif %}
 </nav>

@@ -108,3 +108,6 @@ class DeliveryService:
 
     def getHistory(self):
         return self.history.showHistory()
+
+    def getGraph(self):
+        return self.graph

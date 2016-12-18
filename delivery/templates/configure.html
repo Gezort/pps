@@ -6,15 +6,25 @@
 {% block body %}
 
 <div class="create-container">
-<form action="{% url 'set_start' %}" method="post">
+    <div class="paragraph">Путь</div>
+    <form action="{% url 'set_start' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
         <p>
-            <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+        <select name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;" onchange="this.form.submit()">
+            <option disabled="" selected>Выберите пункт отправления</option>
+            {% for node in nodes %}
+            <option value="{{node.id}}" {% if node.id == start_id %} selected{% endif %}>
+                {{node.name}}
+            </option>
+            {% endfor %}
+        </select>
+            <!-- <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;"> -->
             <input class="btn btn-primary" type="submit" value="Начало пути">
         </p>
     </form>
 
+    {% if start_id != -1 %}
     <form action="{% url 'set_finish' %}" method="post" class="form-group">
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
@@ -23,6 +33,7 @@
             <input class="btn btn-primary" type="submit" value="Конец пути">
         </p>
     </form>
+    {% endif %}
     <div class="paragraph">Оптимизация</div>
         <form action="{% url 'set_criteria' %}" method="post" class="form-group">
             {% csrf_token %}
@@ -70,15 +81,14 @@
 </div>
 
 <div class="create-container" style="font-size: 16px;">
-        <p>
-            <b style="color: #5378FF;"" >Критерий :</b> {{criteria }}<span style='padding-left:30px;'> </span>
-            <b style="color: #5378FF;">Начало :</b> {{ start }} <span style='padding-left:30px;'> </span>
-            <b style="color: #5378FF;">Конец :</b> {{ finish }}
-        </p>
-        
-        <p>
-            <b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}
-        </p>
+    {% if start_id != -1 %}
+        <p><b style="color: #5378FF;"" >Критерий :</b> {{criteria }}</p>
+    {% endif %}
+    {% if start_id != -1 %}
+        <p><b style="color: #5378FF;">Начало :</b> {{ start }}</p>
+    {% endif %}
+        <p><b style="color: #5378FF;">Конец :</b> {{ finish }}</p>
+        <p><b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}</p>
 
         {% if route %}
         <p>

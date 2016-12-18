@@ -106,6 +106,7 @@ def configure(request):
     # else:
     #     form = OrderIdForm()
     # return render(request, 'input_order_id.html', {'form' : form})
+    
     id = int(request.POST['order_id'])
     return redirect(reverse(configure_order, kwargs={'id' : id}))
 
@@ -117,6 +118,7 @@ def configure_order(request, id):
     if int(id) not in DELIVERY_SERVICE.orders_dict:
         raise Http404("Order ID not found")
 
+    nodes = DELIVERY_SERVICE.getGraph().getLegsWithName()
     order = DELIVERY_SERVICE.orders_dict[int(id)]
     items = order.itemList
     route = order.route
@@ -126,16 +128,26 @@ def configure_order(request, id):
     cost = order.cost
     time = order.time
     total_cost = sum(ITEMS[i].cost for i in items)
-    start = '-' if start is None else str(start)
+    start_id = -1 if start is None else start
+    reachable_nodes = None
+    if start is None:
+        start_name = '-'
+    else:
+        reachable_nodes = DELIVERY_SERVICE.getGraph().getReachableNodes(start_id)
+        for node in nodes:
+            if node.id == start_id:
+                start_name = node.name
+                break
     finish = '-' if finish is None else str(finish)
     route = '-' if route is None else str(route)
     items = '-' if items is None else str(items)
     cost = '-' if cost is None else str(cost * total_cost)
     time = '-' if time is None else str(time)
-    context = {'order_id' : id, 'items' : items, 'start' : start, 
+    context = {'order_id' : id, 'items' : items, 'start' : start_name, 'start_id': start_id,
                         'finish' : finish, 'route' : route, 'criteria' : criteria,
                         'cost' : cost, 'time' : time,
-                        'pool' : str(ITEMS)}
+                        'pool' : str(ITEMS), 'reachable_nodes': reachable_nodes,
+                        'nodes': nodes}
     return render(request, 'configure.html', context)
 
 @shows_error

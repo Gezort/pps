@@ -1,5 +1,9 @@
 import pandas
 from .leg import Leg, LegType
+from collections import namedtuple
+
+
+DestPoint = namedtuple("DestPoint", ["id", "name"])
 
 class Graph:
     
@@ -24,10 +28,15 @@ class Graph:
                 df['to_id'][j],
                 df_nodes['name'][df['to_id'][j]],
                 df['name'][j]
-                ))
-        print("edges:")
-        for edge in self.legs:
-            print(repr(edge))
+            ))
+
     def getLegs(self):
         return self.legs
 
+    def getLegsWithName(self):
+        names = [DestPoint(id=leg.getId(), name=leg.getName()) 
+                 for leg in self.legs]
+        return names
+
+    def getReachableNodes(node):
+        pass

@@ -7,7 +7,7 @@ DestPoint = namedtuple("DestPoint", ["id", "name"])
 
 class Graph:
     
-    def getNeighbours(self, vertex, max_weight):
+    def getNeighbours(self, vertex, max_weight=1e18):
         result = [edge for edge in self.legs if edge.getFromId() == vertex and
                 edge.getMaxWeight() >= max_weight]
         return result
@@ -38,5 +38,16 @@ class Graph:
                  for leg in self.legs]
         return names
 
-    def getReachableNodes(node):
-        pass
+
+    def getReachableNodes(self, node):
+        order = [node]
+        result = [node]
+        while len(order) > 0:
+            v = order[0]
+            order = order[1:]
+            for edge in self.getNeighbours(v):
+                u = edge.getToId()
+                if u not in result:
+                    order.append(u)
+                    result.append(u)
+        return result

@@ -2,9 +2,11 @@ from .graph import Graph
 from .item import Item
 from .order import Order, Criteria
 from .oper import Operator
+import sys
 #from leg import Leg
 
 g = Graph()
+sys.exit(0)
 items = [Item(1, 4, "chma", 15), Item(2, 5, "chma2", 10)]
 for item in items:
     print(item)

@@ -8,7 +8,7 @@ class Criteria(Enum):
 
 class Order():
 
-    def __init__(self, id, time, items, route, start, end, cost=None, all_time=None, criteria=Criteria('time')):
+    def __init__(self, id, time, items, route, start, end, error=False, error_no_items=False, cost=None, all_time=None, criteria=Criteria('time')):
         self.id = id
         self.creationTime = time
         self.itemList = items
@@ -18,6 +18,8 @@ class Order():
         self.finishLocation = end
         self.cost = cost
         self.time = all_time
+        self.error = error
+        self.error_no_items = error_no_items
 
     def getLocation(self):
         return None if self.route is None else self.route.getCurrentLocation()

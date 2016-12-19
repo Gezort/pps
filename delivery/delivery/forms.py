@@ -1,7 +1,7 @@
 from django import forms
 
 class OrderIdForm(forms.Form):
-    id = forms.IntegerField(min_value=0)
+    id = forms.IntegerField(min_value=0, required=True)
 
 class ConfigureOrderForm(forms.Form):
     start_location = forms.IntegerField(min_value=0, required=True)

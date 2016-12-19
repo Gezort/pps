@@ -6,7 +6,7 @@
 {% block body %}
 
 <div class="create-container">
-    <div class="paragraph">Путь</div>
+    <div class="paragraph" style="margin-top: -20px;">Путь</div>
     <form action="{% url 'set_start' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
@@ -29,7 +29,15 @@
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
         <p>
-            <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+        <select name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;" onchange="this.form.submit()">
+            <option disabled="" selected>Выберите пункт назначения</option>
+            {% for node in reachable_nodes %}
+            <option value="{{node.id}}" {% if node.id == end_id %} selected{% endif %}>
+                {{node.name}}
+            </option>
+            {% endfor %}
+        </select>
+            <!-- <input type="number" step="1" name="location" class="form-control" style="width:50%; float: left; margin-right: 10px;"> -->
             <input class="btn btn-primary" type="submit" value="Конец пути">
         </p>
     </form>
@@ -48,7 +56,12 @@
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
         <p>
-            <input type="number" step="1" name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+        <select name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px; border: 3px solid {% if error_no_items %}red {% else %} white {% endif %}" required="" onchange="this.form.submit()">
+            <!-- <input type="number" step="1"  class="form-control" style="width:50%; float: left; margin-right: 10px; border: 3px solid {% if error_no_items %}red {% else %} white {% endif %}" required="">  -->
+
+            {% for item in pool %}
+                <option value="{{item}}">{{item}}</option>
+            {% endfor %}
             <input class="btn btn-primary" type="submit" value="Добавить">
         </p>
     </form>
@@ -57,7 +70,11 @@
         {% csrf_token %}
         <input type="hidden" name="order_id" value={{ order_id }}>
         <p>
-            <input type="number" step="1" name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px;">
+        <select name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px; border: 3px solid white" required="" onchange="this.form.submit()">
+            <!-- <input type="number" step="1" name="item_id" class="form-control" style="width:50%; float: left; margin-right: 10px;"> -->
+            {% for item in items %}
+                <option value="{{item}}">{{item}}</option>
+            {% endfor %}
             <input class="btn btn-primary" type="submit" value="Удалить">
         </p>
     </form>
@@ -81,42 +98,43 @@
 </div>
 
 <div class="create-container" style="font-size: 16px;">
-    {% if start_id != -1 %}
         <p><b style="color: #5378FF;"" >Критерий :</b> {{criteria }}</p>
-    {% endif %}
     {% if start_id != -1 %}
         <p><b style="color: #5378FF;">Начало :</b> {{ start }}</p>
     {% endif %}
+    {% if end_id != -1 %}
         <p><b style="color: #5378FF;">Конец :</b> {{ finish }}</p>
+    {% endif %}
         <p><b style="color: #5378FF;"> Добавленные товары :</b> {{ items }}</p>
 
-        {% if route %}
+    {% if error %}
         <p>
-
-            <b style="color: #5378FF;">Построенный путь :</b> 
-            <div class="route-img" style="background-image: url('../static/img/{{order_id}}.png'"></div>                
+            <b style="color: #5378FF; font-size: 20px; text-align: center">Не удалось построить маршрут, удовлетворяющий Вашему заказу</b>
         </p>
-        <p> <b style="color: #5378FF;"> Стоимость ($) :</b> {{ cost }}</p>
-        <p> <b style="color: #5378FF;"> Время (дни) :</b> {{ time }}</p>
+
+    {% else %}
+        
+        {% if route != '-' %}
+            <p>
+
+                <b style="color: #5378FF;">Построенный путь :</b> 
+                <div class="route-img" style="background-image: url('../static/img/{{order_id}}.png'"></div>                
+            </p>
+            <p> <b style="color: #5378FF;"> Стоимость ($) :</b> {{ cost }}</p>
+            <p> <b style="color: #5378FF;"> Время (дни) :</b> {{ time }}</p>
+
+            <form action="{% url 'launch' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value={{ order_id }}>
+                <p>
+                    <input class="btn btn-great" type="submit" value="Запустить заказ">
+                </p>
+            </form>
+
         {% endif %}
 
+    {% endif %}
 
-<!--         <p>
-            Items pool : {{ pool }}
-        </p>
-
- -->
-        
-
-        <!-- <a href="{% url 'launch' %}" class="btn btn-great"></a> -->
-
-        <form action="{% url 'launch' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="order_id" value={{ order_id }}>
-            <p>
-                <input class="btn btn-great" type="submit" value="Запустить заказ">
-            </p>
-        </form>
  </div>
 
 

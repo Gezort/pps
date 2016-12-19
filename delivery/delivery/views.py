@@ -25,9 +25,9 @@ def shows_error(func):
             return HttpResponse(str(e))
 
 def check_user(request, group, name=None):
-    print(name)
+    # print(name)
     user = request.user
-    print(user.username)
+    # print(user.username)
     if  user is None or (not user.is_authenticated()) or str(user.groups.all()[0]) != group:
         raise PermissionDenied("You can't access this page")
     if name is not None and user.username != name:
@@ -86,10 +86,11 @@ def track(request):
                 location = DELIVERY_SERVICE.getLocation(id)
                 if location is None:
                     raise Http404("Order ID not found")
-                return render(request, 'track_order.html', {'location' : location.getId(), 
+                return render(request, 'track_order.html', {'location' : location.getName(), 
                     'order_id': id})
             except:
-                raise Http404("Order ID not found")    
+                # raise Http404("Order ID not found")
+                return render(request, 'input_order_id.html', {'form' : form, 'error': True})
     else:
         form = OrderIdForm()
     return render(request, 'input_order_id.html', {'form' : form})
@@ -115,10 +116,11 @@ def configure_order(request, id):
     check_user(request, 'users')
     global DELIVERY_SERVICE
     global ITEMS
-    if int(id) not in DELIVERY_SERVICE.orders_dict:
-        raise Http404("Order ID not found")
+    # if int(id) not in DELIVERY_SERVICE.orders_dict:
+        # raise Http404("Order ID not found")
 
     nodes = DELIVERY_SERVICE.getGraph().getLegsWithName()
+    # if int(id) not in DELIVERY_SERVICE.orders_dict: 
     order = DELIVERY_SERVICE.orders_dict[int(id)]
     items = order.itemList
     route = order.route
@@ -138,16 +140,26 @@ def configure_order(request, id):
             if node.id == start_id:
                 start_name = node.name
                 break
-    finish = '-' if finish is None else str(finish)
+    end_id = -1 if finish is None else finish
+    if finish is None:
+        finish_name = '-'
+    else:
+        for node in reachable_nodes:
+            if node.id == end_id:
+                finish_name = node.name
+                break
+        
     route = '-' if route is None else str(route)
-    items = '-' if items is None else str(items)
+    # items = '-' if items is None else str(items)
     cost = '-' if cost is None else str(cost * total_cost)
     time = '-' if time is None else str(time)
+    error_no_items = order.error_no_items
+    error = order.error
     context = {'order_id' : id, 'items' : items, 'start' : start_name, 'start_id': start_id,
-                        'finish' : finish, 'route' : route, 'criteria' : criteria,
-                        'cost' : cost, 'time' : time,
-                        'pool' : str(ITEMS), 'reachable_nodes': reachable_nodes,
-                        'nodes': nodes}
+                        'finish' : finish_name, 'route' : route, 'criteria' : criteria,
+                        'cost' : cost, 'time' : time, 'end_id': end_id,
+                        'pool' : ITEMS, 'reachable_nodes': reachable_nodes,
+                        'nodes': nodes, 'error_no_items': error_no_items, 'error': error}
     return render(request, 'configure.html', context)
 
 @shows_error
@@ -208,9 +220,16 @@ def set_criteria(request):
 def build_route(request):
     order_id = int(request.POST['order_id'])
     global DELIVERY_SERVICE
+    order = DELIVERY_SERVICE.orders_dict[int(order_id)]
+    if len(order.itemList) == 0:
+        order.error_no_items = True
+        return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+    else:
+        order.error_no_items = False
     try:
         route_description = DELIVERY_SERVICE.buildRouteForOrder(order_id)
-        print("ROUTE: ", route_description)
+        order.error = False
+        # print("ROUTE: ", route_description)
         G = nx.DiGraph()
         edge_labels = {}
         node_labels = {}
@@ -227,8 +246,11 @@ def build_route(request):
         plt.close()
         G.clear()
     except:
-        raise ObjectDoesNotExist('Cant build route')
+        # raise ObjectDoesNotExist('Cant build route')
+        order.error = True
     return redirect(reverse(configure_order, kwargs={'id' : order_id}))
+
+    
 
 @shows_error
 def lookup(request):
@@ -256,14 +278,14 @@ def move(request):
                 raise Http404("Order ID not found")    
             check_user(request, 'couriers', 'cour_' + str(order.getLocation().getId()))
             try:              
-                print ('MOVE')
-                print (DELIVERY_SERVICE.orders_dict)
+                # print ('MOVE')
+                # print (DELIVERY_SERVICE.orders_dict)
                 DELIVERY_SERVICE.moveOrder(id)
-                print ('MOVED')
+                # print ('MOVED')
                 return redirect(reverse(homepage))
                 # return render(request, 'move.html', {'id' : id})
             except Exception as e:
-                print (e)
+                # print (e)
                 raise Http404("Order ID not found")    
     else:
         form = OrderIdForm()

@@ -12,5 +12,9 @@
 	    {{ form.id|add_class:"form-control"|append_attr:"placeholder:Номер заказа"|append_attr:"style: width: 80%; float: left;" }}
 	    <input type="submit" value="Submit" class="btn btn-primary"/>
 	</form>
+
+	{% if error %}
+		<div style="color: #5378FF; font-size: 20px; text-align: center; margin-top: 20px;">Несуществующий номер заказа</div>
+	{% endif %}
 </div>
 {% endblock %}
